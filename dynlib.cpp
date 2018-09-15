@@ -451,7 +451,7 @@ dynlib_iter_imports (TiXmlDocument &xml) {
             // Actual prefix used by Sony is "_PG" while the referenced function's prefix is "_PL"
             // Stub function pointed to by the function pointer does not ever appear to have a label.
             qsnprintf(buf, MAXNAMELEN, FUNC_IMPORT_PREFIX "%s", name);
-            force_name(r->r_offset, buf);
+			do_name_anyway(r->r_offset, buf);
         }
     }
 
@@ -501,7 +501,7 @@ dynlib_iter_sym (TiXmlDocument &xml) {
             if ( name == NULL )    // don't apply obfuscated labels to database
                 lmprint ("No match! obf: %s addr: %16.16lx", &obf, s->st_value);
             else
-                force_name(s->st_value, name);
+				do_name_anyway(s->st_value, name);
 
             // if is a symbol for a function, mark it as one
             if ( ELF64_ST_TYPE(s->st_info) == STT_FUNC )
@@ -892,14 +892,14 @@ void idaapi run (int arg) {
 
     lopen("log.txt");
  
-    fname = ask_file(0, "PS4 ELF|*.elf;*.prx;*.self;*.sprx|All files (*.*)|*.*", "Please choose an input file");
+    fname = askfile_c(0, "PS4 ELF|*.elf;*.prx;*.self;*.sprx|All files (*.*)|*.*", "Please choose an input file");
 
     if ( fname == NULL ) {
         lmprint ("No file chosen.");
         RETURN_FALSE;
     }
 
-    if ( ask_yn(0, "WARNING: You cannot undo this process!\n"
+    if ( askyn_c(0, "WARNING: You cannot undo this process!\n"
                     "Are you sure you want to load %s?" , fname) != ASKBTN_YES ) {
         lmprint ("Cancelled operation.");
         RETURN_FALSE;
